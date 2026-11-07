@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Index</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        ul { list-style-type: none; }
+        li { margin: 8px 0; }
+        a { text-decoration: none; color: #0366d6; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h2>Project Directory</h2>
+    <ul id="file-list">Loading files...</ul>
+
+    <script>
+        const USERNAME = 'idonothingonthisplace';
+        const REPO = 'pangtvassets';
+        
+        const apiUri = `https://github.com{USERNAME}/${REPO}/contents/`;
+        const listElement = document.getElementById('file-list');
+
+        fetch(apiUri)
+            .then(response => response.json())
+            .then(data => {
+                listElement.innerHTML = '';
+                data.forEach(file => {
+                    if (file.name !== 'index.html') {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = `./${file.path}`; 
+                        a.textContent = file.type === 'dir' ? `📁 ${file.name}/` : `📄 ${file.name}`;
+                        
+                        li.appendChild(a);
+                        listElement.appendChild(li);
+                    }
+                });
+            })
+            .catch(err => {
+                listElement.innerHTML = 'Error loading directory tree.';
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
